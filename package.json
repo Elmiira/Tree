@@ -6,16 +6,12 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
+    "prettier": "prettier --write",
+    "precommit": "prettier",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/main.js ",
-
     "start:dev": "nodemon -r ts-node/register src/main.ts",
-
-    "prettier": "prettier --write",
-    "precommit": "prettier",
-
-
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "tslint -p tsconfig.json -c tslint.json",
