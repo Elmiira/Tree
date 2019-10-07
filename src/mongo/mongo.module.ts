@@ -1,8 +1,8 @@
 
-import { DynamicModule, Global, Module } from '@nestjs/common';
-import { ConnectionService } from './mongo.service';
-import { Db, MongoClient } from 'mongodb';
-import IMongoModuleOptions from './IMongoModuleOptions';
+import { DynamicModule, Global, Module }  from '@nestjs/common';
+import { ConnectionService }                             from './mongo.service';
+import { Db, MongoClient }                                from 'mongodb';
+import IMongoModuleOptions                         from './IMongoModuleOptions';
 import { mongoConnectionToken, mongoClientToken, mongoConfigToken } from './constants';
 
 const connectionProvider = {
@@ -26,12 +26,10 @@ const createConfigProvider = (config) => ({
   provide: mongoConfigToken,
   useValue: config,
 });
-
 @Global()
 @Module({})
 export class MongoModule {
   static forRoot(config: IMongoModuleOptions): DynamicModule {
-    console.log(" here we have config and isssssssss ",  config);
     const configProvider = createConfigProvider(config);
 
     return {

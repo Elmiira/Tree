@@ -1,7 +1,6 @@
-import { MongoClient } from 'mongodb';
 import IMongoModuleOptions from './IMongoModuleOptions';
-import { readFile } from 'fs-extra';
-
+import { MongoClient }                 from 'mongodb';
+import { readFile }                          from 'fs-extra';
 export class ConnectionService {
 	private client?: MongoClient;
 
@@ -46,13 +45,12 @@ export class ConnectionService {
 			config.name
 			}${options}`;
 
-		console.log("connectionURL    ------------>", connectionURL)
 		return new Promise<MongoClient>((resolve, reject) => {
 			const connectToMongo = () => {
 				return MongoClient.connect(
 					connectionURL,
 					{
-						appname: 'SERVICE_NAME',
+						appname: 'TradeShiftService',
 						reconnectTries: retryAttempts,
 						autoReconnect: true,
 					},
