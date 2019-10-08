@@ -6,5 +6,4 @@ export default interface IMongoModuleOptions {
   retryDelay?: number;
   retryAttempts?: number;
   credentialsFilePath?: string;
-  connectionStringOptions?: string;
 }

@@ -1,15 +1,14 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import config                      from './config';
+import { Module }               from '@nestjs/common';
 import { MongoModule } from './mongo/mongo.module';
-import config from './config';
-
+import { TreeController } from './tree/tree.controller';
+import { TreeService }       from './tree/tree.service';
 
 @Module({
   imports: [    
      MongoModule.forRoot(config.mongo),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [TreeController],
+  providers   : [TreeService],
 })
 export class AppModule { }

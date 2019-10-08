@@ -1,10 +1,13 @@
 import IMongoModuleOptions from './IMongoModuleOptions';
 import { MongoClient }                 from 'mongodb';
 import { readFile }                          from 'fs-extra';
+import { Logger } from '@nestjs/common';
+
 export class ConnectionService {
 	private client?: MongoClient;
+	 logger = new Logger();
 
-	constructor(private readonly options: IMongoModuleOptions) { }
+	constructor(private readonly options: IMongoModuleOptions,){ }
 
 	async getClient(): Promise<MongoClient> {
 		if (this.client === undefined) {
@@ -23,8 +26,8 @@ export class ConnectionService {
 				user = credentialsParsed.user;
 				password = credentialsParsed.password;
 			} catch (e) {
-				console.error('Mongo: could not open configuration file');
-				console.error('Mongo: configuration file address: ', config.credentialsFilePath);
+				this.logger.error('Mongo: could not open configuration file');
+				this.logger.error('Mongo: configuration file address: ', config.credentialsFilePath);
 				console.error(e);
 			}
 		}
@@ -36,34 +39,29 @@ export class ConnectionService {
 			authString = `${user}:${password}@`;
 		}
 
-		let options = '';
-		if (config.connectionStringOptions) {
-			options = `?${config.connectionStringOptions}`;
-		}
-
-		const connectionURL = `mongodb://${authString}${config.host}/${
-			config.name
-			}${options}`;
+		const connectionURL = `mongodb://${authString}${config.host}/${config.name}$`;
 
 		return new Promise<MongoClient>((resolve, reject) => {
 			const connectToMongo = () => {
 				return MongoClient.connect(
 					connectionURL,
 					{
+						useUnifiedTopology: true ,
+						useNewUrlParser: true,
 						appname: 'TradeShiftService',
 						reconnectTries: retryAttempts,
 						autoReconnect: true,
 					},
 				)
 					.then((client) => {
-						console.info('Mongo: Ready');
+						this.logger.log('Mongo: Ready');
 						resolve(client);
 					})
 					.catch((err) => {
-						console.error('Mongo: Connection Failed', err);
-						console.error('Mongo Connection URL:', connectionURL);
-						console.error('Mongo Config:', config);
-						console.info('Mongo: Trying to reconnect in 5 seconds');
+						this.logger.error('Mongo: Connection Failed', err);
+						this.logger.error('Mongo Connection URL:', connectionURL);
+						this.logger.error(`Mongo Config:, ${config}`);
+						this.logger.log('Mongo: Trying to reconnect in 5 seconds');
 						setTimeout(() => {
 							connectToMongo();
 						}, retryDelay || 5000);
@@ -71,5 +69,9 @@ export class ConnectionService {
 			};
 			connectToMongo();
 		});
+	}
+
+	async createIndex(collectionName, index): Promise<boolean> {
+		return true;
 	}
 }
