@@ -12,7 +12,7 @@ const config: IConfig = {
   },
 
   mongo: {
-    name: process.env.MONGO_DB_NAME || 'TradeShift',
+    name: process.env.MONGO_DB_NAME || 'Project',
     host: process.env.MONGO_HOST || 'localhost:27017',
   },
 };

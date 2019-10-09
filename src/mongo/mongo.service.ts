@@ -48,7 +48,7 @@ export class ConnectionService {
 					{
 						useUnifiedTopology: true ,
 						useNewUrlParser: true,
-						appname: 'TradeShiftService',
+						appname: 'TreeService',
 						reconnectTries: retryAttempts,
 						autoReconnect: true,
 					},
