@@ -5,7 +5,7 @@ import { mongoConnectionToken, mongoClientToken } from './constants';
 
 export const InjectConnection = () => Inject(mongoConnectionToken);
 export const InjectClient = () => Inject(mongoClientToken);
-export const index = (collectionName: string, indexes: Array<IndexSpecification>): MethodDecorator => {
+export const indexDB = (collectionName: string, indexes: Array<IndexSpecification>): MethodDecorator => {
 	return (target, key: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
 		return {
 			value: async function (...args: any[]) {

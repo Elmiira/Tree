@@ -1,0 +1,1 @@
+export default [ 'B', 'C', 'D', 'E', 'F', 'G',' H', 'K'];
