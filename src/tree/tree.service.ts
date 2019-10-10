@@ -1,8 +1,10 @@
-import { IDBNode, ITreeNode } from './interfaces/index';
-import { Db } from 'mongodb';
+import { IDBNode, ITreeNode }        from './interfaces/index';
+import config                         from '../config';
+import { Db, ObjectID }              from 'mongodb';
 import { IndexDB, InjectConnection } from '../mongo/index';
-import indexList from './mongoIndexes';
-import { Injectable, Logger } from '@nestjs/common';
+import indexList                     from './mongoIndexes';
+import { Injectable, Logger }        from '@nestjs/common';
+import { WorkLoadConcern }           from '../app/types/WorkLoad';
 
 @Injectable()
 export class TreeService {
@@ -28,10 +30,10 @@ export class TreeService {
 	async createNode({ node, parent }: { node: string; parent: IDBNode; }): Promise<any> {
 		try {
 			const res = await this.mongoConnection.collection('tree').insertOne({
-				name:     node,
-				height:   parent ? parent.height + 1 : 0,
+				name: node,
+				height: parent ? parent.height + 1 : 0,
 				parentId: parent ? parent._id : null,
-				path:     parent ? this.generatePath(parent.path, parent.name) : null
+				path: parent ? this.generatePath(parent.path, parent.name) : null
 			})
 			return (res.ops[0]);
 		} catch (error) {
@@ -46,22 +48,70 @@ export class TreeService {
 		return childPath.concat(parentName, ",", suffix);
 	}
 
+	async findDescenders(id: ObjectID): Promise<any> {
+		if(config.dbWorkLoad === WorkLoadConcern.WRITE_INTENSIVE){
+			return await this.findDescendersWithWritePriority(id);
+		}
+		else if(config.dbWorkLoad === WorkLoadConcern.READ_INTENSIVE){
+			return await this.findDescendersWithReadPriority(id);
+		}
+		//TODO: return for rare cases error handling
+	};
 
-		async findAllChildrenById(): Promise<any> {
+	async findDescendersWithWritePriority(id: ObjectID) {
+		try {
+			const result = await this.mongoConnection.collection('tree')
+				.aggregate([
+					{ $match: { "_id": id } },
+					{
+						$graphLookup: {
+							from: "tree",
+							startWith: "$_id",
+							connectFromField: "_id",
+							connectToField: "parentId",
+							depthField: "depth",
+							as: "descenders",
+						}
+					},
+					{ $sort: {'descenders.depth': 1 }}
+				])
+				.toArray();
+			return result
+		} catch (error) {
+			this.logger.error(error);
+		}
+	};
 
+	async findDescendersWithReadPriority(id: ObjectID):Promise<any> {
+	};
+
+	async updateNode(srcNode: ObjectID, tarNode: ObjectID): Promise<boolean> {
+		if(config.dbWorkLoad === WorkLoadConcern.WRITE_INTENSIVE){
+			return await this.updateImmediateChild(srcNode, tarNode);
 		}
-	
-		async findImmediateChildren(): Promise<any> {
-	
+		else if(config.dbWorkLoad ===  WorkLoadConcern.READ_INTENSIVE){
+			return await this.updateDescenders(srcNode, tarNode);
 		}
-	
-		async updateChildren() {
-			// 1- check if future node is its immediat children
-			// if yes: then update both two nodes : parentId , path
-			// yes
-			// get remove from path of target  then name of changed one b, increment the height parent to his oarent
-			// then update b based on c: parrent and heigh and and its path ( exactly before **)
-			// if no just update the changed one path
-			// for childreen should know incement all or not!
+	};
+
+	async updateImmediateChild(srcNode: ObjectID, tarNode: ObjectID): Promise<boolean> {
+		try {
+			const res = await this.mongoConnection.collection('tree').updateOne(
+				{ _id: srcNode },
+				{ $set: { 'parentId': tarNode } }
+			);
+			const { n, ok } = res.result;
+			return n === 1 && ok === 1;
+		} catch (error) {
+			this.logger.error(error);
 		}
+	};
+
+	async updateDescenders(srcNode: ObjectID, tarNode: ObjectID): Promise<boolean> {
+		try {
+			return true;
+		} catch (error) {
+			this.logger.error(error);
+		}
+	};
 };

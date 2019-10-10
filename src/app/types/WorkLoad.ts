@@ -1,0 +1,4 @@
+export enum WorkLoadConcern {
+  READ_INTENSIVE  = 'READ_INTENSIVE',
+  WRITE_INTENSIVE = 'WRITE_INTENSIVE',
+};
