@@ -1,5 +1,5 @@
-export default  [{
+export default [{
   key: {
-   " name": 1,
-  }
+    path: 1,
+  },
 }];

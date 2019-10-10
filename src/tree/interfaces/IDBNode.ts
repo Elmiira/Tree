@@ -1,9 +1,8 @@
 import { ObjectID } from 'mongodb';
-export default interface INode {
-	WithId: any,
+export interface IDBNode {
 	_id: ObjectID,
 	name: string,
 	height: number,
 	parentId: ObjectID;
 	path: string,
-}
+};

@@ -1,80 +1,67 @@
-import { Injectable } from '@nestjs/common';
+import { IDBNode, ITreeNode } from './interfaces/index';
+import { Db } from 'mongodb';
+import { IndexDB, InjectConnection } from '../mongo/index';
 import indexList from './mongoIndexes';
-import INode from './interfaces/INode';
-import NodeList from '../sample-data/tree.sample';
-import { Db, InjectConnection, ObjectID, indexDB } from '../mongo/index';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class TreeService {
+	logger = new Logger();
 	constructor(@InjectConnection() private readonly mongoConnection: Db) { }
 
-	async getHello(params): Promise<string> {
-		try {
-			this.initializer();
-			return 'Knock out today :) !!';
-		} catch (error) {
-			console.log(error);
-			//TODO: Error Handler here
-			return ("errorr")
-		}
-	}
-	//TODO: change name with unique id
-
-	async findAllChildrenById(): Promise<any> {
-
-	}
-
-	async findImmediateChildren(): Promise<any> {
-
-	}
-
-	async updateChildren() {
-		// 1- check if future node is its immediat children
-		// if yes: then update both two nodes : parentId , path
-		   // yes
-		   // get remove from path of target  then name of changed one b, increment the height parent to his oarent
-		   // then update b based on c: parrent and heigh and and its path ( exactly before **)
-		// if no just update the changed one path
-		// for childreen should know incement all or not!
-	}
-
-
-	async initializer(): Promise<void> {
-		const dbNotExist = true; //TODO:
-		if (dbNotExist) {
-			this.generateTree();
-		}
+	@IndexDB("tree", indexList)
+	async checkCollectionExistence(): Promise<boolean> {
+		const collections = await this.mongoConnection.listCollections({}, { nameOnly: true }).toArray();
+		return collections.some(collection => { collection.name === 'tree' });
 	};
 
-	@indexDB("tree", indexList)
-	async generateTree() {
-		let parentInfo = await this.createNode({ nodeName: 'root', parent: null });
-		let i = 0 ;
-		while( i < NodeList.length){
-			parentInfo = await this.createNode({ nodeName: NodeList[i], parent: parentInfo });
-			i++;
-		};
+	async generateTree(treeNode: ITreeNode, parent: IDBNode = null) {
+		if (typeof (treeNode) === 'object') {
+			parent = await this.createNode({ node: treeNode.root, parent });
+			treeNode.children.map(child => this.generateTree(child, parent));
+		}
+		else {
+			this.createNode({ node: treeNode, parent });
+		}
 	}
 
-	async createNode({ nodeName, parent }: { nodeName: string; parent: INode; }): Promise<any>  {
+	async createNode({ node, parent }: { node: string; parent: IDBNode; }): Promise<any> {
 		try {
-			//{ result: { ok: 1, n: 1  , ops }
 			const res = await this.mongoConnection.collection('tree').insertOne({
-				name: nodeName,
-				height: parent ? parent.height + 1 : 0,
+				name:     node,
+				height:   parent ? parent.height + 1 : 0,
 				parentId: parent ? parent._id : null,
-				path: parent ? this.generatePath(parent.path, parent.name) : null
+				path:     parent ? this.generatePath(parent.path, parent.name) : null
 			})
 			return (res.ops[0]);
 		} catch (error) {
-			console.log("error here ", error);
+			this.logger.error('error here ', error);
 		}
-	}
+	};
 
 	generatePath(ParentPath: string | null, parentName: string): string {
-		// ** name1, name2, name3, ** 
+		// ** root, child1, child2, ..., **
 		const suffix = "**";
-		const childPath =  ParentPath ? suffix.concat(ParentPath.replace(/\*/g, '')) : suffix;
+		const childPath = ParentPath ? suffix.concat(ParentPath.replace(/\*/g, '')) : suffix;
 		return childPath.concat(parentName, ",", suffix);
 	}
-}
+
+
+		async findAllChildrenById(): Promise<any> {
+
+		}
+	
+		async findImmediateChildren(): Promise<any> {
+	
+		}
+	
+		async updateChildren() {
+			// 1- check if future node is its immediat children
+			// if yes: then update both two nodes : parentId , path
+			// yes
+			// get remove from path of target  then name of changed one b, increment the height parent to his oarent
+			// then update b based on c: parrent and heigh and and its path ( exactly before **)
+			// if no just update the changed one path
+			// for childreen should know incement all or not!
+		}
+};

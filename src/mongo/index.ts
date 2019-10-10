@@ -1,5 +1,4 @@
-export *                                                                      from  './mongo.module';
-export *                                                                      from  './mongo.decorators';
+export { mongoConnectionToken }           from './constants';
 export { default as IMongoModuleOptions } from './IMongoModuleOptions';
-export { mongoConnectionToken }                   from './constants';
-export { ObjectID, Db }                                          from  'mongodb';
+export *                                  from  './mongo.module';
+export *                                  from  './mongo.decorators';
