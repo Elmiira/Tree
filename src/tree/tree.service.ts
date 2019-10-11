@@ -143,7 +143,7 @@ export class TreeService {
 			);
 
 			await session.commitTransaction();
-			this.logger.log('Mongo: Transaction committed :)')
+			this.logger.log('Mongo: Transaction committed.')
 			this.logger.log(`${res.result.n} of ${srcNodeInfo.name} descenders are updated`);
 			return true;
 		} catch (error) {

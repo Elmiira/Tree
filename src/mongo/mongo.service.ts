@@ -70,8 +70,4 @@ export class ConnectionService {
 			connectToMongo();
 		});
 	}
-
-	async createIndex(collectionName, index): Promise<boolean> {
-		return true;
-	}
 }
