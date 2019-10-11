@@ -2,14 +2,12 @@
 
 This project was bootstrapped with [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-Below you will find some information on how to perform common tasks.<br>
-
 ## Table of Contents
 - [Folder Structure](#folder-structure)
 - [Available Scripts](#available-scripts)
-  - [Running the app with docker](#npm-start)
-  - [Running the app locally](#npm-start)
-  - [Test](#npm-test)
+  - [Running the app with docker](#running-the-app-with-docker)
+  - [Running the app locally](#running-the-app-locally)
+  - [Test](#test)
 - [Access Databases](#access-databases)
 
  
@@ -35,23 +33,20 @@ my-app/
 
 ## Available Scripts
 
-In the project directory, you can run:
-
-
 ### `Running the app with docker`
 
 Before getting started you should have the following installed on your machine:  
   - docker
   - docker-compose
 
-Run these sequentially:
+Run these sequentially in the project directory:
 ```bash
 # Build the container images 
 # Watch for possible build errors if you had error you should build again  
-$ docker-compose build
+ docker-compose build
 
 
-$ docker-compose up
+ docker-compose up
 ```
 
 ### `Running the app locally`
@@ -59,13 +54,13 @@ $ docker-compose up
 
 ```bash
 # development
-$ npm run start
+npm run start
 
 # watch mode
-$ npm run start:dev
+npm run start:dev
 
 # production mode
-$ npm run start:prod
+npm run start:prod
 ```
 Alternatively you may use `yarn`:
 
@@ -77,13 +72,13 @@ yarn add react-router
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
 # test coverage
-$ npm run test:cov
+npm run test:cov
 ```
 
 
@@ -92,7 +87,9 @@ $ npm run test:cov
   ### Docker
   - After configuring everything `docker-compose up` runs a new mongodb container.
   - It stores database data inside a docker volume `mongodb_data`.
-  - Mongo is exposed to port 29017 and you can restore old db files using `mongorestore -h localhost --port 29017` __When mongo container is running__  to connect with and mongo IDE/GUI  [Studio 3t](https://studio3t.com) or just run
+  -__When mongo container is running__  Mongo is exposed to port 29017  so:
+    - you can restore old db files using `mongorestore -h localhost --port 29017` 
+    - to connect with and mongo IDE/GUI  [Studio 3t](https://studio3t.com) or just run
   ```bash
   $ docker exec -it tree_mongo_1 mongo --port 29017
   ```
