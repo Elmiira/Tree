@@ -4,5 +4,5 @@ export interface IDBNode {
 	name: string,
 	height: number,
 	parentId: ObjectID;
-	path: string,
+	ancestors: string[],
 };

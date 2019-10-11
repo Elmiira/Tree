@@ -17,8 +17,8 @@ export class TreeController {
       this.logger.log('Initializing: is generating tree...');
 			await this.treeService.generateTree(TreeData);
     }
-    await this.treeService.updateNode(new ObjectID("5d9f971f713d8f67bc8e5c0b"), new ObjectID("5d9f971f713d8f67bc8e5c0c"));
-    return await this.treeService.findDescenders(new ObjectID("5d9f971f713d8f67bc8e5c0a"));
+    // await this.treeService.updateNode(new ObjectID("5da078920167372d84f6b160"), new ObjectID("5da078920167372d84f6b165"));
+    return await this.treeService.findDescenders(new ObjectID("5da078920167372d84f6b15f"));
   }
 
   @Get("/search") //TODO: request query params

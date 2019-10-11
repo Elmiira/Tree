@@ -15,7 +15,7 @@ const config: IConfig = {
     name: process.env.MONGO_DB_NAME || 'Project',
     host: process.env.MONGO_HOST || 'localhost:27017',
   },
- dbWorkLoad: WorkLoadConcern.WRITE_INTENSIVE,
+ dbWorkLoad: WorkLoadConcern.READ_INTENSIVE,
 };
 export default config;
 
