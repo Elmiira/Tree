@@ -106,10 +106,10 @@ npm run test:cov
 
   With this context, tree data model is implemented by storing references to “parent” nodes and an array that stores all ancestors; So with cost of memory space within a redundancy support db like mongo, this project implements a fast and efficient solution to find the descendants and the ancestors of a node.
   The appropriate services to search and change the parent node with this data model are in order:
-  -`findDescendersWithReadPriority`
-  -`updateDescenders`
+  - `findDescendersWithReadPriority`
+  - `updateDescenders`
 
-To optimize search time, tree collection is indexed based on ancestors field.
+To optimize search time, tree collection is indexed based on ancestors field.<br/>
 To update subtree, this project utilizes mongo array operator like `$pull, $push, $in , ...`; Consequently instead of a loop operation and using mongo `Bulk` ops, by delegating to db and least I/Os, consistency is resolved (for real cases we could consider db clusters & Replication).
 
  ### Write Intensive
