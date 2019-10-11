@@ -9,8 +9,8 @@ This project was bootstrapped with [Nest](https://github.com/nestjs/nest) framew
   - [Running the app locally](#running-the-app-locally)
   - [Test](#test)
 - [Access Databases](#access-databases)
+- [Algorithm Mindset](#algorithm-mindset)
 
- 
 
  ## Folder Structure
 
@@ -95,3 +95,23 @@ npm run test:cov
       ```
   ### Locally
   - Mongo is exposed to port 27017
+
+## Algorithm Mindset
+  
+  The main idea was storing a data model that organizes documents in a tree-like structure; To deal this issue, there are two workload concerns:
+  `-Read Intensive`
+  `-Write Intensive`
+
+  ### Read Intensive
+
+  With this context, tree data model is implemented by storing references to “parent” nodes and an array that stores all ancestors; So with cost of memory space within a redundancy support db like mongo, this project implements a fast and efficient solution to find the descendants and the ancestors of a node.
+  The appropriate services to search and change the parent node with this data model are in order:
+    - findDescendersWithReadPriority
+    - updateDescenders
+  To optimize search time, tree collection is indexed based on ancestors field.
+  To update subtree, this project utilizes mongo array operator like `$pull, $push, $in , ...`; Consequently instead of a loop operation and using mongo `Bulk` ops, by delegating to db and least I/Os, consistency is resolved (for real cases we could consider db clusters & Replication).
+
+ ### Write Intensive
+  A high change frequency system which aims and concerns in data consistency, maybe!!! prefers slightly simpler tree data model with cost of delegating some computations to programs to handle read requests; So __just__ to codify this idea, two methods are implemented that just use the id of the node’s parent:
+    - findDescendersWithWritePriority
+    - updateImmediateChildren
