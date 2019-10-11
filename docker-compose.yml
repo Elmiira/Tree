@@ -10,10 +10,9 @@ services:
             dockerfile: Dockerfile
         environment:
             - NODE_ENV=development
-            -  MONGO_HOST=backend_mongo_1:29017
+            - MONGO_HOST=tree_mongo_1:29017
         ports:
             - 3000:3000
-            
     mongo:
         image: mongo:4.0
         volumes: 

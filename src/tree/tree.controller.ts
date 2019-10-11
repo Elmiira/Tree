@@ -17,11 +17,11 @@ export class TreeController {
       this.logger.log('Initializing: is generating tree...');
 			await this.treeService.generateTree(TreeData);
     }
-    // await this.treeService.updateNode(new ObjectID("5da078920167372d84f6b160"), new ObjectID("5da078920167372d84f6b165"));
-    return await this.treeService.findDescenders(new ObjectID("5da078920167372d84f6b15f"));
+    // await this.treeService.updateNode(new ObjectID("5da0864dcddee10006ca7c45"), new ObjectID("5da0864dcddee10006ca7c49"));
+    return await this.treeService.findDescenders(new ObjectID("5da0864dcddee10006ca7c44"));
   }
 
-  @Get("/search") //TODO: request query params
+  @Get("/search")
   async getSubTrees(parentId: string): Promise<Array<IDBNode>> {
     return await this.treeService.findDescenders(new ObjectID(parentId));
   }

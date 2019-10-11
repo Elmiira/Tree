@@ -48,7 +48,7 @@ export class ConnectionService {
 					{
 						useUnifiedTopology: true ,
 						useNewUrlParser: true,
-						appname: 'TreeService',
+						appname: 'tree-service',
 						reconnectTries: retryAttempts,
 						autoReconnect: true,
 					},
