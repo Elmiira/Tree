@@ -1,40 +1,61 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
-
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This project was bootstrapped with [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Installation
+Below you will find some information on how to perform common tasks.<br>
 
-```bash
-$ npm install
+## Table of Contents
+- [Folder Structure](#folder-structure)
+- [Available Scripts](#available-scripts)
+  - [Running the app with docker](#npm-start)
+  - [Running the app locally](#npm-start)
+  - [Test](#npm-test)
+- [Access Databases](#access-databases)
+
+ 
+
+ ## Folder Structure
+
+```
+my-app/
+  README.md
+  node_modules/
+  package.json
+  Dockerfile
+  docker-compose.yml
+  src/
+    app/
+    mongo/
+    sample-data/
+    tree/
+    config.ts
+    main.ts
+  test/
 ```
 
-## Running the app
+## Available Scripts
+
+In the project directory, you can run:
+
+
+### `Running the app with docker`
+
+Before getting started you should have the following installed on your machine:  
+  - docker
+  - docker-compose
+
+Run these sequentially:
+```bash
+# Build the container images 
+# Watch for possible build errors if you had error you should build again  
+$ docker-compose build
+
+
+$ docker-compose up
+```
+
+### `Running the app locally`
+
 
 ```bash
 # development
@@ -46,8 +67,13 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+Alternatively you may use `yarn`:
 
-## Test
+```sh
+yarn add react-router
+```
+
+### Test
 
 ```bash
 # unit tests
@@ -60,16 +86,15 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-  Nest is [MIT licensed](LICENSE).
+## Access Databases
+ 
+  ### Docker
+  - After configuring everything `docker-compose up` runs a new mongodb container.
+  - It stores database data inside a docker volume `mongodb_data`.
+  - Mongo is exposed to port 29017 and you can restore old db files using `mongorestore -h localhost --port 29017` __When mongo container is running__  to connect with and mongo IDE/GUI  [Studio 3t](https://studio3t.com) or just run
+  ```bash
+  $ docker exec -it tree_mongo_1 mongo --port 29017
+  ```
+  ### Locally
+  - Mongo is exposed to port 27017
