@@ -2,7 +2,7 @@ import { Controller, Logger, Get } from '@nestjs/common';
 import TreeData         from '../sample-data/tree.sample';
 import { TreeService }  from '../tree/tree.service';
 
-@Controller('/app')
+@Controller()
 export class AppController {
   logger = new Logger();
   constructor(private readonly treeService: TreeService) {}

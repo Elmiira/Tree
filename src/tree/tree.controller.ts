@@ -3,7 +3,6 @@ import { IDBNode }       from './interfaces/index';
 import { ObjectID }      from 'mongodb';
 import { TreeService }   from './tree.service';
 import { UpdateTreeDto } from './types/index';
-import { node } from 'prop-types';
 
 @Controller('/tree')
 export class TreeController {
