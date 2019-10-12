@@ -30,6 +30,18 @@ export class TreeService {
 		}
 	}
 
+	async getTree(): Promise<Array<any>> {
+		try {
+			const nodeList = await this.mongoConnection.collection('tree')
+			.find({})
+			.sort({ height: 1 })
+			.toArray();
+			return nodeList
+		} catch (error) {
+			this.logger.error(error);
+		}
+	};
+
 	async createNode({ node, parent }: { node: string; parent: IDBNode; }): Promise<any> {
 		try {
 			const res = await this.mongoConnection.collection('tree').insertOne({
@@ -108,8 +120,12 @@ export class TreeService {
 			if (!srcNodeInfo || !tarNodeInfo) { throw Error('Error: Invalid input Data') };
 			// *** in case of  practical using of this method, src/tarNode info could be gained directly via api params
 			const heightDiffVal: number = tarNodeInfo.height - srcNodeInfo.height + 1;
-			const srcNodeNewAncestors: Array<string> = tarNodeInfo.ancestors
-				.concat(tarNodeInfo.name);
+			const srcNodeNewAncestors: Array<string> = 
+				tarNodeInfo.ancestors
+					?
+					tarNodeInfo.ancestors.concat(tarNodeInfo.name)
+					:
+					[tarNodeInfo.name];
 
 			session.startTransaction({
 				readConcern: { level: 'majority' },
