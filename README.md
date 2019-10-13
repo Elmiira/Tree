@@ -65,7 +65,7 @@ npm run start:prod
 Alternatively you may use `yarn`:
 
 ```sh
-yarn add react-router
+yarn start
 ```
 
 ### Test
