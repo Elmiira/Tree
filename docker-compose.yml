@@ -20,3 +20,4 @@ services:
         command:  mongod --port 29017
         ports:
             - 29017:29017
+            
