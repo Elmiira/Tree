@@ -1,6 +1,6 @@
 
-import { Inject, Logger }                         from '@nestjs/common';
 import { Db, IndexSpecification }                  from 'mongodb';
+import { Inject, Logger }                         from '@nestjs/common';
 import { mongoConnectionToken, mongoClientToken } from './constants';
 
 export const InjectConnection = () => Inject(mongoConnectionToken);

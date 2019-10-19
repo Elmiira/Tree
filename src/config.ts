@@ -1,5 +1,5 @@
 import { IMongoModuleOptions } from './mongo/index';
-import { WorkLoadConcern }            from './app/types/WorkLoad';
+import { WorkLoadConcern }     from './app/types/WorkLoad';
 import 'dotenv/config';
 
 const appKey        = process.env.APP_KEY        || 'some-random-string';
