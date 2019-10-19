@@ -1,23 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { app, db } from './setup';
+import { dbNodes, idStringifiedDdNodes } from '../src/sample-data/index';
 
 describe('AppController (e2e)', () => {
-  let app;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  beforeAll(async () => {
+    await db.collection('tree').insertMany(dbNodes);
   });
 
-  it('/ (GET)', () => {
+  afterAll(async () => {
+    await db.collection('tree').drop();
+  });
+
+  it('/ (GET) : It should return a whole list of tree node', async () => {
     return request(app.getHttpServer())
       .get('/')
       .expect(200)
-      .expect('Hello World!');
+      .expect({ status: 200, res: idStringifiedDdNodes });
   });
 });

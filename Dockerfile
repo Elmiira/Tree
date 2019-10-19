@@ -1,4 +1,4 @@
-FROM node:10-alpine as build
+FROM node:12-alpine as build
 # We compile typescript in first stage
 
 # install git and node-gyp dependencies

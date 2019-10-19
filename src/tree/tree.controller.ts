@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Logger, Body, Param } from '@nestjs/common';
-import { IDBNode }       from './interfaces/index';
+import { IGetTreeResponse } from './interfaces/index';
 import { ObjectID }      from 'mongodb';
 import { TreeService }   from './tree.service';
 import { UpdateTreeDto } from './types/index';
@@ -10,14 +10,18 @@ export class TreeController {
   constructor(private readonly treeService: TreeService) {}
 
   @Get("/search:id")
-  async getSubTrees(@Param('id') nodeId): Promise<Array<IDBNode>> {
-    return await this.treeService.findDescenders(new ObjectID(nodeId));
+  async getSubTrees(@Param('id') nodeId): Promise<IGetTreeResponse> {
+    try {
+      return await this.treeService.findDescenders(new ObjectID(nodeId));
+    } catch (error) {
+      this.logger.log(error)
+      return { status: 404, res: [] }
+    }
   }
 
   @Post("/update")
   async changeParentNode(@Body() updateTreeDto: UpdateTreeDto ): Promise<boolean> {
     const { srcNode, tarNode } = updateTreeDto;
-    return await this.treeService.updateNode(new ObjectID(srcNode), new ObjectID(tarNode));
-    //TODO: error handler
+    return await this.treeService.updateNode(new ObjectID(srcNode), new ObjectID(tarNode));    
   }
 }

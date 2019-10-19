@@ -5,6 +5,6 @@ import config from './config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-  await app.listen(3333);
+  await app.listen(config.app.port);
 }
 bootstrap();

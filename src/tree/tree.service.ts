@@ -1,10 +1,10 @@
-import config                                       from '../config';
-import { IDBNode, ITreeNode }                      from './interfaces/index';
-import indexList                                   from './mongoIndexes';
-import { Db, ObjectID, MongoClient }               from 'mongodb';
+import config from '../config';
+import { IDBNode, ITreeNode, IGetTreeResponse } from './interfaces/index';
+import indexList from './mongoIndexes';
+import { Db, ObjectID, MongoClient } from 'mongodb';
 import { IndexDB, InjectConnection, InjectClient } from '../mongo/index';
-import { Injectable, Logger }                      from '@nestjs/common';
-import { WorkLoadConcern }                         from '../app/types/WorkLoad';
+import { Injectable, Logger } from '@nestjs/common';
+import { WorkLoadConcern } from '../app/types/WorkLoad';
 
 @Injectable()
 export class TreeService {
@@ -30,29 +30,25 @@ export class TreeService {
 		}
 	}
 
-	async getTree(): Promise<Array<any>> {
-		try {
-			const nodeList = await this.mongoConnection.collection('tree')
-			.find({})
-			.sort({ height: 1 })
-			.toArray();
-			return nodeList
-		} catch (error) {
-			this.logger.error(error);
-		}
+	async createNode({ node, parent }: { node: string; parent: IDBNode; }): Promise<any> {
+		const res = await this.mongoConnection.collection('tree').insertOne({
+			name:      node,
+			height:    parent ? parent.height + 1 : 0,
+			parentId:  parent ? parent._id : null,
+			ancestors: parent ? (parent.ancestors || []).concat(parent.name) : null
+		})
+		return (res.ops[0]);
 	};
 
-	async createNode({ node, parent }: { node: string; parent: IDBNode; }): Promise<any> {
+	async getTree(): Promise<IGetTreeResponse> {
 		try {
-			const res = await this.mongoConnection.collection('tree').insertOne({
-				name:      node,
-				height:    parent ? parent.height + 1 : 0,
-				parentId:  parent ? parent._id : null,
-				ancestors: parent ? (parent.ancestors || []).concat(parent.name) : null
-			})
-			return (res.ops[0]);
+			const nodeList = await this.mongoConnection.collection('tree')
+				.find({})
+				.sort({ height: 1 })
+				.toArray();
+			return { status: 200, res: nodeList };
 		} catch (error) {
-			this.logger.error('error here ', error);
+			return this.handleError(error);
 		}
 	};
 
@@ -68,14 +64,24 @@ export class TreeService {
 	async findDescendersWithReadPriority(id: ObjectID): Promise<any> {
 		try {
 			const srcNodeInfo: IDBNode = await this.mongoConnection.collection('tree').findOne({ _id: id });
-			if (!srcNodeInfo) { throw Error('Error: invalid input data') }
+			if (!srcNodeInfo) { throw Error('Invalid input data') }
 			const result = await this.mongoConnection.collection('tree')
 				.find({ ancestors: srcNodeInfo.name })
 				.sort({ height: 1 })
 				.toArray();
-			return result
+			return { res: result, status: 200 }
 		} catch (error) {
-			this.logger.error(error);
+		  return this.handleError(error);
+		}
+	};
+
+	handleError(error: string) {
+		this.logger.error(error);
+		switch (error) {
+			case 'Error: Invalid input data':
+				return { status: 400, res: [] };
+			default:
+				return { status: 503, res: [] };
 		}
 	};
 
@@ -112,15 +118,16 @@ export class TreeService {
 		}
 	};
 
-	async updateDescenders(srcNode: ObjectID, tarNode: ObjectID): Promise<boolean> {
+	async updateDescenders(srcNode: ObjectID, tarNode: ObjectID): Promise<any> {
 		const session = this.mongoClient.startSession();
+		let status = 201;
 		try {
 			const srcNodeInfo: IDBNode = await this.mongoConnection.collection('tree').findOne({ _id: srcNode });
 			const tarNodeInfo: IDBNode = await this.mongoConnection.collection('tree').findOne({ _id: tarNode });
-			if (!srcNodeInfo || !tarNodeInfo) { throw Error('Error: Invalid input Data') };
+			if (!srcNodeInfo || !tarNodeInfo) { throw Error('Invalid input Data') };
 			// *** in case of  practical using of this method, src/tarNode info could be gained directly via api params
 			const heightDiffVal: number = tarNodeInfo.height - srcNodeInfo.height + 1;
-			const srcNodeNewAncestors: Array<string> = 
+			const srcNodeNewAncestors: Array<string> =
 				tarNodeInfo.ancestors
 					?
 					tarNodeInfo.ancestors.concat(tarNodeInfo.name)
@@ -161,12 +168,18 @@ export class TreeService {
 			await session.commitTransaction();
 			this.logger.log('Mongo: Transaction committed.')
 			this.logger.log(`${res.result.n} of ${srcNodeInfo.name} descenders are updated`);
-			return true;
 		} catch (error) {
 			session.abortTransaction();
 			this.logger.error(error);
+			switch (error) {
+				case 'Error: Invalid input data':
+					status = 400;
+				default:
+					status = 503;
+			}
 		} finally {
 			session.endSession();
+			return { status };
 		}
 	};
 

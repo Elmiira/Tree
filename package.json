@@ -25,13 +25,14 @@
     "@nestjs/common": "^6.7.2",
     "@nestjs/core": "^6.7.2",
     "@nestjs/platform-express": "^6.7.2",
+    "@types/mongodb": "^3.1.2",
+    "dotenv": "8.1.0",
+    "fs-extra": "^7.0.0",
+    "mongodb": "^3.1.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.3",
-    "@types/mongodb": "^3.1.2",
-    "fs-extra": "^7.0.0",
-    "mongodb": "^3.1.1",
-    "dotenv":  "8.1.0"
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^6.9.0",
