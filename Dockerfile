@@ -28,7 +28,7 @@ RUN cd /app/tree-service && \
 FROM node:10-alpine
 # next stage: prepare production environment
 ENV NODE_ENV=development
-ENV PORT=10201
+ENV PORT=3333
 
 # Add tiny init process to wrap main app in production
 RUN apk add --no-cache tini
@@ -47,5 +47,5 @@ COPY --chown=node:node --from=build /app/tree-service/dist /app/current/src
 WORKDIR /app/current
 USER node
 
-EXPOSE 10201
+EXPOSE 3333
 CMD [ "node", "src/main.js" ]
